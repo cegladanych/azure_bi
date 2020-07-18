@@ -1,5 +1,5 @@
 resource "azurerm_sql_server" "bigdataserver" {
-  name                         = format("kv%03s%03d", random_string.demo.result, var.instance)
+  name                         = format("sql%03s%03d", random_string.demo.result, var.instance)
   resource_group_name          = azurerm_resource_group.bigdatarg.name
   location                     = azurerm_resource_group.bigdatarg.location
   version                      = "12.0"
@@ -12,7 +12,7 @@ resource "azurerm_sql_server" "bigdataserver" {
 }
 
 resource "azurerm_sql_database" "bigdataserverdb" {
-  name                = format("kv%03s%03d", random_string.demo.result, var.instance)
+  name                = format("sql%03s%03d", random_string.demo.result, var.instance)
   resource_group_name = azurerm_resource_group.bigdatarg.name
   location            = azurerm_resource_group.bigdatarg.location
   server_name         = azurerm_sql_server.bigdataserver.name

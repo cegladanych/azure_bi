@@ -4,6 +4,15 @@ variable "location" {
 }
 
 variable "instance" {
-  description = "databricks instance."
+  description = "instance."
   type        = string
+}
+
+variable "landing_storage_containers" {
+    description = "example names for each storage container"
+    default = [
+        "aircraft",
+        "airlines",
+        "airports",
+    ]
 }
