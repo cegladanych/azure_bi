@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "bigdatasa" {
-  name                     = format("%03s%03d", random_string.demo.result, var.instance)
+  name                     = format("sa%03s%03s", random_string.randomname.result, var.environment)
   resource_group_name      = azurerm_resource_group.bigdatarg.name
   location                 = azurerm_resource_group.bigdatarg.location
   account_tier             = "Standard"

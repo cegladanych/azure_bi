@@ -3,8 +3,12 @@ variable "location" {
   type        = string
 }
 
-variable "instance" {
-  description = "instance."
+# variable "instance" {
+#   description = "instance."
+#   type        = string
+# }
+variable "environment" {
+  description = "name of environment in our case it is dev"
   type        = string
 }
 
