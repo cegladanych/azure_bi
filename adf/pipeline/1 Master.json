@@ -1,0 +1,113 @@
+{
+	"name": "1 Master",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Airlines",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Walidacja Airlines",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "2 Airlines",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Airports",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Walidacja Airports",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "3 Airports",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Flights",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Walidacja Flights",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "4 Flights",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Walidacja Airlines",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Airlines",
+						"type": "DatasetReference"
+					},
+					"timeout": "7.00:00:00",
+					"sleep": 10,
+					"childItems": true
+				}
+			},
+			{
+				"name": "Walidacja Airports",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Airports",
+						"type": "DatasetReference"
+					},
+					"timeout": "7.00:00:00",
+					"sleep": 10,
+					"childItems": true
+				}
+			},
+			{
+				"name": "Walidacja Flights",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Flights",
+						"type": "DatasetReference"
+					},
+					"timeout": "7.00:00:00",
+					"sleep": 10,
+					"childItems": true
+				}
+			}
+		],
+		"annotations": []
+	}
+}

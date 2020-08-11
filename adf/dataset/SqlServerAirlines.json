@@ -1,0 +1,25 @@
+{
+	"name": "SqlServerAirlines",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServerloty",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "IATACODE",
+				"type": "varchar"
+			},
+			{
+				"name": "AIRLINE",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Airlines"
+		}
+	}
+}
