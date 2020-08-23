@@ -16,6 +16,7 @@ parameters:
 - name: 'usage'  # 'dev'
   type: string
 
+or(eq(variables['Build.Reason'], 'PullRequest'),and(eq(variables['Build.SourceBranch'], 'refs/heads/master'),succeeded()))
 
 steps:
 - task: TerraformInstaller@0
