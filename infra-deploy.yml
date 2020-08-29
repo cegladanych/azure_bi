@@ -1,54 +1,61 @@
 parameters:
-- name: 'backendServiceArm'  # $(Subscription)
-  type: string
-- name: 'workingDirectory'  # $(Pipeline.Workspace)/drop
-  type: string
-- name: 'environment'  # 'dev'
-  type: string
-- name: 'backendAzureRmResourceGroupName' # $(Tf.ResourceGroup)
-  type: string
-- name: 'backendAzureRmStorageAccountName' # $(Tf.StorageAccount)
-  type: string
-- name: 'backendAzureRmContainerName' # $(Tf.Container)
-  type: string
-- name: 'statefileContext' # $(Tf.Statefile)
-  type: string
-- name: 'usage'  # 'dev'
-  type: string
-
-or(eq(variables['Build.Reason'], 'PullRequest'),and(eq(variables['Build.SourceBranch'], 'refs/heads/master'),succeeded()))
-
-steps:
-- task: TerraformInstaller@0
-  displayName: 'terraform installer'
-  inputs:
-    terraformVersion: 0.12.24
-
-- task: TerraformTaskV1@0
-  displayName: 'terraform init'
-  inputs:
-    command: 'init'
-    workingDirectory:  ${{parameters.workingDirectory}}
-    backendServiceArm: ${{parameters.backendServiceArm}}
-    backendAzureRmResourceGroupName: ${{parameters.backendAzureRmResourceGroupName}}
-    backendAzureRmStorageAccountName: ${{parameters.backendAzureRmStorageAccountName}}
-    backendAzureRmContainerName: ${{parameters.backendAzureRmContainerName}}
-    backendAzureRmKey: ${{parameters.statefileContext}}_${{parameters.environment}}_terraform.state
-
-- task: TerraformTaskV1@0
-  displayName: 'terraform plan'
-  inputs:
-    provider: 'azurerm'
-    environmentServiceNameAzureRM: ${{parameters.backendServiceArm}}
-    command: 'plan'
-    commandOptions: '-var-file=../../${{parameters.environment}}/${{parameters.usage}}.tfvars -out=${{parameters.environment}}.tfplan'
-    workingDirectory:  ${{parameters.workingDirectory}}
-
-- task: TerraformTaskV1@0
-  displayName: 'terraform apply'
-  inputs:
-    provider: 'azurerm'
-    environmentServiceNameAzureRM: ${{parameters.backendServiceArm}}
-    command: 'apply'
-    commandOptions: '${{parameters.environment}}.tfplan'
-    workingDirectory:  ${{parameters.workingDirectory}}
+  - name: 'Subscription' 
+    type: string
+  - name: 'ResourceGroupName'
+    type: string
+  - name: 'StorageAccountName' 
+    type: string
+  - name: 'ContainerName' 
+    type: string
+  - name: 'statefileContext' 
+    type: string
+    values:
+      - 'terraform.state'
+  
+  steps:
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: $(System.DefaultWorkingDirectory)
+      Contents: '**'
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+  
+  
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'drop'
+  
+  - task: TerraformInstaller@0
+    displayName: 'terraform installer'
+    inputs:
+      terraformVersion: 0.12.24
+  
+  - task: TerraformTaskV1@0
+    displayName: 'terraform init'
+    inputs:
+      provider: 'azurerm'
+      command: 'init'
+      workingDirectory:  '$(System.DefaultWorkingDirectory)/terraforms'
+      backendServiceArm: ${{parameters.Subscription}}
+      backendAzureRmResourceGroupName: ${{parameters.ResourceGroupName}}
+      backendAzureRmStorageAccountName: ${{parameters.StorageAccountName}}
+      backendAzureRmContainerName: ${{parameters.ContainerName}}
+      backendAzureRmKey: ${{parameters.statefileContext}}
+  
+  - task: TerraformTaskV1@0
+    displayName: 'terraform plan'
+    inputs:
+      provider: 'azurerm'
+      environmentServiceNameAzureRM: ${{parameters.Subscription}}
+      command: 'plan'
+      commandOptions: '-var-file=$(System.DefaultWorkingDirectory)/terraforms/terraform.tfvars -out=terraform.tfplan'
+      workingDirectory:  '$(System.DefaultWorkingDirectory)/terraforms'
+  
+  - task: TerraformTaskV1@0
+    displayName: 'terraform apply'
+    inputs:
+      provider: 'azurerm'
+      environmentServiceNameAzureRM: ${{parameters.Subscription}}
+      command: 'apply'
+      commandOptions: '$(System.DefaultWorkingDirectory)/terraforms/terraform.tfplan'
+      workingDirectory:  '$(System.DefaultWorkingDirectory)/terraforms'
